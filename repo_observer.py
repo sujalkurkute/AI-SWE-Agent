@@ -14,11 +14,39 @@ def clone_repo(repo_url: str, dest_dir: str) -> str:
     if dest.exists() and any(dest.iterdir()):
         print(f"[repo_observer] Repo already exists at {dest}, pulling latest...")
         repo = Repo(dest)
+
+        # A previous agent run may have created and left the repo checked
+        # out on a feature branch (e.g. agent-fix-20260101120000) to open a
+        # PR. That branch has no "upstream" tracking configured (it was
+        # pushed without -u), so a plain `git pull` fails with "no tracking
+        # information for the current branch". Always return to the repo's
+        # actual default branch first, so pulling is well-defined.
+        default_branch = _get_default_branch(repo)
+        if repo.active_branch.name != default_branch:
+            print(f"[repo_observer] Switching from '{repo.active_branch.name}' "
+                  f"back to '{default_branch}' before pulling...")
+            repo.git.checkout(default_branch)
+
         repo.remotes.origin.pull()
     else:
         print(f"[repo_observer] Cloning {repo_url} into {dest}...")
         Repo.clone_from(repo_url, dest)
     return str(dest)
+
+
+def _get_default_branch(repo: Repo) -> str:
+    """Figure out the repo's actual default branch (main, master, or
+    whatever it's called) instead of assuming 'main'."""
+    try:
+        # origin/HEAD points at the remote's actual default branch
+        result = repo.git.symbolic_ref("refs/remotes/origin/HEAD")
+        return result.rsplit("/", 1)[-1]
+    except Exception:
+        # Fallback: whichever of these actually exists locally
+        for candidate in ("main", "master"):
+            if candidate in [h.name for h in repo.heads]:
+                return candidate
+        return repo.heads[0].name  # last resort: whatever the first branch is
 
 
 def load_gitignore(repo_path: str) -> pathspec.PathSpec:
