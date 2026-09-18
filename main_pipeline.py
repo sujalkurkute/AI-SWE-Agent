@@ -124,11 +124,11 @@ def run_full_pipeline(
 
 if __name__ == "__main__":
     run_full_pipeline(
-        repo_url="https://github.com/sujalkurkute/agent_test_repo.git",
-        dest_dir="workspace/repos/agent_test_repo",
+        repo_url="https://github.com/sujalkurkute/agent_test_repo2.git",
+        dest_dir="workspace/repos/agent_test_repo2",
         repo_owner="sujalkurkute",
-        repo_name="agent_test_repo",
-        max_findings_to_fix=3,  # tries all 4 findings so the real bug (mypy return-value) isn't cut off
+        repo_name="agent_test_repo2",
+        max_findings_to_fix=4,  # tries all 4 findings so the real bug (mypy return-value) isn't cut off
         use_docker=True,
         create_real_pr=False,  # flip to True only once you've reviewed the diff/tests
     )
