@@ -54,7 +54,7 @@ if __name__ == "__main__":
     from static_analysis import run_all_static_analysis
 
     # Absolute path to your agent_test_repo (the one with buggy_math.py)
-    REPO_PATH = r"C:\Users\Lenovo\Desktop\test\agent_test_repo"
+    REPO_PATH = r"C:\Users\Lenovo\Desktop\test\agent_test_repo2"
     findings = run_all_static_analysis(REPO_PATH)
 
     print(f"Analyzing {len(findings)} findings with LLM reasoning...\n")

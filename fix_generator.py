@@ -116,7 +116,7 @@ def is_valid_diff(diff_text: str) -> bool:
 
 if __name__ == "__main__":
     # Test with your actual seeded bug file
-    file_path = r"C:\Users\Lenovo\Desktop\test\agent_test_repo\buggy_math.py"
+    file_path = r"C:\Users\Lenovo\Desktop\test\agent_test_repo2\bugy.py"
     with open(file_path) as f:
         content = f.read()
 
