@@ -130,5 +130,5 @@ if __name__ == "__main__":
         repo_name="agent_test_repo2",
         max_findings_to_fix=4,  # tries all 4 findings so the real bug (mypy return-value) isn't cut off
         use_docker=True,
-        create_real_pr=False,  # flip to True only once you've reviewed the diff/tests
+        create_real_pr=True,  # flip to True only once you've reviewed the diff/tests
     )
