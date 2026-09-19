@@ -27,6 +27,20 @@ def clone_repo(repo_url: str, dest_dir: str) -> str:
                   f"back to '{default_branch}' before pulling...")
             repo.git.checkout(default_branch)
 
+        # This working copy belongs to the agent, not the person - a
+        # previous run may have left it with uncommitted local edits (e.g.
+        # the CRLF-normalization step rewriting a file in place). Those
+        # edits block `git pull` with "local changes would be overwritten
+        # by merge". is_dirty() can miss some edge cases (e.g. line-ending
+        # or file-mode differences that git's merge check cares about but
+        # GitPython's dirty check doesn't flag) - so rather than relying on
+        # detection, we unconditionally force this working copy back to a
+        # clean state before every pull. Since nothing here should ever be
+        # hand-edited or kept long-term, this is always safe.
+        print("[repo_observer] Resetting working copy to a clean state before pulling...")
+        repo.git.reset("--hard")
+        repo.git.clean("-fd")
+
         repo.remotes.origin.pull()
     else:
         print(f"[repo_observer] Cloning {repo_url} into {dest}...")
